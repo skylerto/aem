@@ -10,6 +10,7 @@ module Aem
       @build_package_path = 'crx/packmgr/service/.json/etc/packages/my_packages'
       @download_package_path = 'etc/packages/my_packages'
       @upload_package_path = 'crx/packmgr/service.jsp'
+      @tree_activate_path = 'etc/replication/treeactivation.html'
     end
 
     # => curl -u admin:admin http://localhost:4502/crx/packmgr/service.jsp?cmd=help
@@ -98,6 +99,48 @@ module Aem
       c.password = @info.password
       c.http_post
       return c
+    end
+
+    # curl -u admin:admin -F cmd=activate -F ignoredeactivated=true -F onlymodified=true -F path=/content/geometrixx/en/community http://localhost:4502/etc/replication/treeactivation.html
+    def activate path, modified='true'
+      c = Curl::Easy.new("http://#{@info.url}/#{@tree_activate_path}")
+      c.http_auth_types = :basic
+      c.username = @info.username
+      c.password = @info.password
+      c.http_post(
+        Curl::PostField.content('cmd', 'activate'),
+        Curl::PostField.content('ignoredeactivated', 'true'),
+        Curl::PostField.content('onlymodified', modified),
+        Curl::PostField.content('path', path)
+      )
+      content = Nokogiri::HTML(c.body_str)
+      res = content
+
+      err = content.css('.error')
+      if err && !err.empty?
+        res = err
+      else
+        res = []
+        c.body_str.split('<br>').each do |br|
+          content = Nokogiri::HTML(br)
+          status = content.css('.action').text
+          path = content.css('.path')
+          path = path.text.strip.split(' ')[0] || nil
+          res << {
+            'path' => path,
+            'status' => status
+          }
+        end
+      end
+      return res
+    end
+
+    def activate_paths paths
+      res = []
+      paths.each do |path|
+        res << self.activate(path)
+      end
+      return res
     end
 
     # => curl -u admin:admin http://localhost:4502/etc/packages/my_packages/samplepackage.zip > <local filepath>
