@@ -65,17 +65,17 @@ module Aem
     end
 
     # builds a NAME
-    desc "build NAME", "builds a NAME"
+    desc "build NAME GROUP", "builds a NAME package from a GROUP"
     option :url
-    def build package
-      puts cmd(options).build_package package
+    def build package, group=''
+      puts cmd(options).build_package package, group
     end
 
     # downloads a specific NAME to a specific PATH defaulting to the current directory
-    desc "download NAME PATH", "downloads a specific NAME to a specific PATH defaulting to the current directory"
+    desc "download NAME GROUP PATH", "downloads a specific NAME package from a group, to a specific PATH defaulting to the current directory"
     option :url
-    def download package, path='./'
-      puts cmd(options).download_package package, path
+    def download package, group='', path='./'
+      puts cmd(options).download_package package, group, path
     end
 
     # uploads the PATH with the NAME
@@ -86,10 +86,10 @@ module Aem
     end
 
     # installs a NAME
-    desc "install NAME", "installs a NAME"
+    desc "install NAME GROUP", "installs a NAME package from a GROUP"
     option :url
-    def install package
-      puts cmd(options).install_package package
+    def install package, group=''
+      puts cmd(options).install_package package, group
     end
 
     # tree activates a list of PATHS

@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "curb"
   spec.add_dependency "nokogiri"
   spec.add_dependency "thor"
+  spec.add_dependency 'rubyzip', '~> 0.9.9'
 
   spec.add_development_dependency "bundler", "~> 1.14"
   spec.add_development_dependency "rake", "~> 10.0"

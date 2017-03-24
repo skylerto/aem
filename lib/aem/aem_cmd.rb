@@ -1,5 +1,11 @@
 require 'curb'
 require 'nokogiri'
+require 'zip/zip'
+require 'stringio'
+class StringIO
+  def path
+  end
+end
 
 module Aem
 
@@ -200,16 +206,13 @@ module Aem
     # @param package [String] the name of the package to download.
     # @param path [String] the path to activate.
     # @return [String] the path to the downloaded zip.
-    def download_package package, path='./'
-      c = Curl::Easy.new("http://#{@info.url}/#{@download_package_path}/#{package}.zip")
-      c.http_auth_types = :basic
-      c.username = @info.username
-      c.password = @info.password
-      c.perform
+    def download_package package, group='my_packages', path='.'
+      url = "http://#{@info.url}/#{@download_package_path}/#{group}/#{package}.zip"
       pack = "#{path}/#{package}.zip"
-      File.open(pack, 'w') do |file|
-        file << c.body_str
-      end
+      cmd = "curl -u #{@info.username}:#{@info.password} #{url} > #{pack}"
+      puts cmd
+      value = `#{cmd}`
+      puts value
       return pack
     end
 
