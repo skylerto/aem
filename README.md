@@ -22,6 +22,43 @@ Or install it yourself as:
 
 This can be used as a CLI, or within another project.
 
+### CLI
+
+Helpful information.
+```
+aem help
+```
+
+Display all packages.
+```
+aem packages
+```
+
+Filter out package based on property key, value, key defaults to package name.
+```
+aem package <value> <key>
+```
+
+Build a specific package by name.
+```
+aem build <package-name>
+```
+
+Download a specific package by name
+```
+aem download <package-name>
+```
+
+Upload a package by path and name
+```
+aem upload <path-to-package> <package-name>
+```
+
+Install a specific package by name
+```
+aem install <package-name>
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
