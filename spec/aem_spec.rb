@@ -59,4 +59,14 @@ RSpec.describe Aem::AemCmd do
     expect(exec).not_to be nil
     expect(exec).not_to eq ''
   end
+
+  it 'download a package' do
+    cmd = Aem::AemCmd.new @info
+    exec = cmd.download_package 'inlet-terms', '.'
+    expect(exec).not_to be nil
+    expect(exec).not_to eq ''
+    expect(exec).to eq './inlet-terms.zip'
+    expect(File.exist?('./inlet-terms.zip')).to be true
+    File.delete('./inlet-terms.zip')
+  end
 end
