@@ -2,6 +2,10 @@ require 'thor'
 require 'yaml'
 
 module Aem
+
+  # The CLI interface
+  #
+  # @author Skyler Layne
   class CLI < Thor
     def initialize(*args)
       super
@@ -15,11 +19,13 @@ module Aem
       end
     end
 
+    # gets the info used in the configuration
     desc "info", "gets the info used in the configuration"
     def info
       puts @info
     end
 
+    # starts the setup process
     desc "setup", "starts the setup process"
     def setup
       url = ask("AEM URL:")
@@ -44,42 +50,49 @@ module Aem
       end
     end
 
+    # gets a list of all the packages available on AEM server
     desc "packages", "gets a list of all the packages available on AEM server"
     option :url
     def packages
       puts cmd(options).list_packages
     end
 
+    # searches for a package based on VALUE, KEY defaulting to name property
     desc "package VALUE KEY", "searches for a package based on VALUE, KEY defaulting to name property"
     option :url
     def package name, property='name'
       puts cmd(options).package_info name, property
     end
 
+    # builds a NAME
     desc "build NAME", "builds a NAME"
     option :url
     def build package
       puts cmd(options).build_package package
     end
 
+    # downloads a specific NAME to a specific PATH defaulting to the current directory
     desc "download NAME PATH", "downloads a specific NAME to a specific PATH defaulting to the current directory"
     option :url
     def download package, path='./'
       puts cmd(options).download_package package, path
     end
 
+    # uploads the PATH with the NAME
     desc "upload PATH NAME", "uploads the PATH with the NAME"
     option :url
     def upload file, name
       puts cmd(options).upload_package file, name
     end
 
+    # installs a NAME
     desc "install NAME", "installs a NAME"
     option :url
     def install package
       puts cmd(options).install_package package
     end
 
+    # tree activates a list of PATHS
     desc "activate PATHS", "tree activates a list of PATHS"
     option :url
     def activate *paths

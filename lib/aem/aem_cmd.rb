@@ -2,6 +2,10 @@ require 'curb'
 require 'nokogiri'
 
 module Aem
+
+  # Commands that can be executed via AEM.
+  #
+  # @author Skyler Layne
   class AemCmd
     def initialize(info)
       @info = info
@@ -13,7 +17,11 @@ module Aem
       @tree_activate_path = 'etc/replication/treeactivation.html'
     end
 
-    # => curl -u admin:admin http://localhost:4502/crx/packmgr/service.jsp?cmd=help
+    # Grabs the help menu from AEM
+    #
+    # @example
+    #   equivalent to curl -u admin:admin http://localhost:4502/crx/packmgr/service.jsp?cmd=help
+    # @return [String] the help data.
     def help
       c = Curl::Easy.new("http://#{@info.url}/#{@help_path}")
       c.http_auth_types = :basic
@@ -25,6 +33,11 @@ module Aem
       return xml.xpath('//data').text
     end
 
+    # Find package info using value, key
+    #
+    # @param name [String] the value to search for.
+    # @param property [String] the key to search on.
+    # @return [Hash] properties of the package.
     def package_info name, property='name'
       packages = self.list_packages
       res = packages.select do |pkg|
@@ -33,7 +46,11 @@ module Aem
       return res
     end
 
-    # => curl -u admin:admin http://localhost:4502/crx/packmgr/service.jsp?cmd=ls
+    # List Packages in AEM
+    #
+    # @example
+    #   equivalent to curl -u admin:admin http://localhost:4502/crx/packmgr/service.jsp?cmd=ls
+    # @return [Array] an array of package info as a Hash
     def list_packages value=''
       c = Curl::Easy.new("http://#{@info.url}/#{@list_package_path}")
       c.http_auth_types = :basic
@@ -71,8 +88,15 @@ module Aem
       end
     end
 
-    # =>  curl -u admin:admin -X POST http://localhost:4502/crx/packmgr/service/.json/etc/packages/my_packages/samplepackage.zip?cmd=build
-    def build_packages *packages
+    # Build a list of packages
+    #
+    #
+    # @example
+    #   equivalent to curl -u admin:admin -X POST http://localhost:4502/crx/packmgr/service/.json/etc/packages/my_packages/samplepackage.zip?cmd=build
+    #
+    # @param packages [Array] an array of package names to build
+    # @return [Hash] hash of package build info
+    def build_packages packages
       res = Hash.new
       packages.each do |package|
         res[package] = self.build_package package
@@ -80,6 +104,10 @@ module Aem
       return res
     end
 
+    # Build a single package
+    #
+    # @param package [String] the name of the package to build.
+    # @return [String] the response from the server
     def build_package package
       pack = "#{@build_package_path}/#{package}.zip"
       c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=build")
@@ -90,7 +118,13 @@ module Aem
       return c.body_str
     end
 
-    # => curl -u admin:admin -X POST http://localhost:4502/crx/packmgr/service/.json/etc/packages/my_packages/samplepackage.zip?cmd=install
+    # Install a package
+    #
+    # @example
+    #   equivalent to curl -u admin:admin -X POST http://localhost:4502/crx/packmgr/service/.json/etc/packages/my_packages/samplepackage.zip?cmd=install
+    #
+    # @param package [String] the name of the package to install.
+    # @return [Curl::Easy] the Curl object.
     def install_package package
       pack = "#{@build_package_path}/#{package}.zip"
       c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=install")
@@ -101,7 +135,15 @@ module Aem
       return c
     end
 
-    # curl -u admin:admin -F cmd=activate -F ignoredeactivated=true -F onlymodified=true -F path=/content/geometrixx/en/community http://localhost:4502/etc/replication/treeactivation.html
+    # Activate a path
+    #
+    # @example
+    #   curl -u admin:admin -F cmd=activate -F ignoredeactivated=true -F onlymodified=true -F path=/content/geometrixx/en/community http://localhost:4502/etc/replication/treeactivation.html
+    #
+    # @param path [String] the path to activate
+    # @param modified [Boolean] boolean to activitate only modified content,
+    # defaulting to true.
+    # @return [Hash] Hash of path, status
     def activate path, modified='true'
       c = Curl::Easy.new("http://#{@info.url}/#{@tree_activate_path}")
       c.http_auth_types = :basic
@@ -126,24 +168,37 @@ module Aem
           status = content.css('.action').text
           path = content.css('.path')
           path = path.text.strip.split(' ')[0] || nil
-          res << {
-            'path' => path,
-            'status' => status
-          }
+            res << {
+              'path' => path,
+              'status' => status
+            } unless path.nil?
         end
       end
       return res
     end
 
-    def activate_paths paths
+    # Activate a list of paths, see #activate
+    #
+    # @param paths [Array] the paths to activate
+    # @param modified [Boolean] boolean to activitate only modified content,
+    # defaulting to true.
+    # @return [Array] array of Hashs path, status.
+    def activate_paths paths, modified='true'
       res = []
       paths.each do |path|
-        res << self.activate(path)
+        res << self.activate(path, modified)
       end
       return res
     end
 
-    # => curl -u admin:admin http://localhost:4502/etc/packages/my_packages/samplepackage.zip > <local filepath>
+    # Download a package
+    #
+    # @example
+    #   curl -u admin:admin http://localhost:4502/etc/packages/my_packages/samplepackage.zip > <local filepath>
+    #
+    # @param package [String] the name of the package to download.
+    # @param path [String] the path to activate.
+    # @return [String] the path to the downloaded zip.
     def download_package package, path='./'
       c = Curl::Easy.new("http://#{@info.url}/#{@download_package_path}/#{package}.zip")
       c.http_auth_types = :basic
@@ -157,7 +212,14 @@ module Aem
       return pack
     end
 
-    # => curl -u admin:admin -F file=@"C:\sample\samplepackage.zip" -F name="samplepackage" -F force=true -F install=false http://localhost:4502/crx/packmgr/service.jsp
+    # Upload a package with a name
+    #
+    # @example
+    #   curl -u admin:admin -F file=@"C:\sample\samplepackage.zip" -F name="samplepackage" -F force=true -F install=false http://localhost:4502/crx/packmgr/service.jsp
+    #
+    # @param file [String] the zip file to upload
+    # @param name [String] the name of the package in AEM
+    # @return [Curl::Easy] the curl output.
     def upload_package(file, name)
       c = Curl::Easy.new("http://#{@info.url}/#{@upload_package_path}")
       c.http_auth_types = :basic

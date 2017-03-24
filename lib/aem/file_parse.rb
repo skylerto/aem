@@ -3,14 +3,10 @@ require 'yaml'
 module Aem
 
   # Reads the contents of a YAML file.
-  # == Parameters:
-  # file::
-  #   A string path to a configuration file, default location is in user's HOME
-  #   directory
   #
-  # == Returns:
-  #   A hash of the yaml file
-  #
+  # @param file [String] A string path to a configuration file, default
+  # location is in user's HOME directory
+  # @return [Hash] the yaml translated into a hash.
   def read file="#{ENV["HOME"]}/.aem.yaml"
     if File.exist?(file)
       return YAML.load_file(file)
@@ -20,14 +16,15 @@ module Aem
   end
 
   # Writes the configuration file to $HOME/.aem.yaml
-  # == Parameters:
-  # hash::
-  #   A hash of contents to write to the confg file
   #
+  # @param hash [Hash] A hash of contents to write to the confg file
   def create hash
     File.open("#{ENV['HOME']}/.aem.yaml", 'w') {|f| f.write contents.to_yaml }
   end
 
+  # File Parser if a class for file operations.
+  #
+  # @author Skyler Layne
   class FileParse
     include Aem
   end
