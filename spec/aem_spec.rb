@@ -29,44 +29,58 @@ RSpec.describe Aem::AemCmd do
 
   before(:each) do
     opts = Aem::FileParse.new.read
-    @info = Aem::Info.new opts
+    info = Aem::Info.new opts
+    @cmd = Aem::AemCmd.new info
   end
 
   it 'makes a help call' do
-    cmd = Aem::AemCmd.new @info
-    exec = cmd.help
+    exec = @cmd.help
     expect(exec).not_to be nil
     expect(exec).not_to eq ''
   end
 
   it 'makes a list packages call' do
-    cmd = Aem::AemCmd.new @info
-    exec = cmd.list_packages
+    exec = @cmd.list_packages 'name'
+    expect(exec).not_to be nil
+    expect(exec).not_to eq ''
+  end
+
+  it 'will list the package info' do
+    exec = @cmd.package_info 'cq-mcm-content'
     expect(exec).not_to be nil
     expect(exec).not_to eq ''
   end
 
   it 'makes a build package call' do
-    cmd = Aem::AemCmd.new @info
-    exec = cmd.build_package 'inlet-terms'
+    exec = @cmd.build_package 'cq-mcm-content'
     expect(exec).not_to be nil
     expect(exec).not_to eq ''
   end
 
   it 'makes a build packages call' do
-    cmd = Aem::AemCmd.new @info
-    exec = cmd.build_packages 'inlet-terms', 'loading'
+    exec = @cmd.build_packages 'cq-media-content', 'cq-mcm-content'
     expect(exec).not_to be nil
     expect(exec).not_to eq ''
   end
 
   it 'download a package' do
-    cmd = Aem::AemCmd.new @info
-    exec = cmd.download_package 'inlet-terms', '.'
+    exec = @cmd.download_package 'cq-media-content', '.'
     expect(exec).not_to be nil
     expect(exec).not_to eq ''
-    expect(exec).to eq './inlet-terms.zip'
-    expect(File.exist?('./inlet-terms.zip')).to be true
-    File.delete('./inlet-terms.zip')
+    expect(exec).to eq './cq-media-content.zip'
+    expect(File.exist?('./cq-media-content.zip')).to be true
+    File.delete('./cq-media-content.zip')
+  end
+
+  it 'upload a package' do
+    exec = @cmd.upload_package('./res/cq-media-content.zip', 'cq-media-content')
+    expect(exec).not_to be nil
+    expect(exec).not_to eq ''
+  end
+
+  it 'installs a package' do
+    exec = @cmd.install_package 'cq-media-content'
+    expect(exec).not_to be nil
+    expect(exec).not_to eq ''
   end
 end

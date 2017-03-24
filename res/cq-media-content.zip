@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+    <head><title>404 Resource at '/etc/packages/my_packages/cq-media-content.zip' not found: No resource found</title></head>
+    <body>
+        <h1>Resource at '/etc/packages/my_packages/cq-media-content.zip' not found: No resource found</h1>
+        <p>Cannot serve request to /etc/packages/my_packages/cq-media-content.zip in /libs/sling/servlet/errorhandler/404.jsp</p>
+        
+        <h3>Request Progress:</h3>
+<pre>
+      0 TIMER_START{Request Processing}
+      0 COMMENT timer_end format is {&lt;elapsed msec&gt;,&lt;timer name&gt;} &lt;optional message&gt;
+      0 LOG Method=GET, PathInfo=/etc/packages/my_packages/cq-media-content.zip
+      0 TIMER_START{ResourceResolution}
+      0 TIMER_END{0,ResourceResolution} URI=/etc/packages/my_packages/cq-media-content.zip resolves to Resource=NonExistingResource, path=/etc/packages/my_packages/cq-media-content.zip
+      0 LOG Resource Path Info: SlingRequestPathInfo: path=&apos;/etc/packages/my_packages/cq-media-content.zip&apos;, selectorString=&apos;null&apos;, extension=&apos;zip&apos;, suffix=&apos;null&apos;
+      0 TIMER_START{ServletResolution}
+      0 TIMER_START{resolveServlet(/etc/packages/my_packages/cq-media-content.zip)}
+      4 LOG {0}: no servlet found
+      4 TIMER_END{4,resolveServlet(/etc/packages/my_packages/cq-media-content.zip)} Using servlet org.apache.sling.servlets.get.DefaultGetServlet
+      4 TIMER_END{4,ServletResolution} URI=/etc/packages/my_packages/cq-media-content.zip handled by Servlet=org.apache.sling.servlets.get.DefaultGetServlet
+      4 LOG Applying Requestfilters
+      4 LOG Calling filter: com.adobe.granite.resourceresolverhelper.impl.ResourceResolverHelperImpl
+      4 LOG Calling filter: org.apache.sling.bgservlets.impl.BackgroundServletStarterFilter
+      4 LOG Calling filter: com.adobe.granite.rest.impl.servlet.ApiResourceFilter
+      4 LOG Calling filter: org.apache.sling.i18n.impl.I18NFilter
+      4 LOG Calling filter: com.adobe.granite.httpcache.impl.InnerCacheFilter
+      4 LOG Calling filter: org.apache.sling.rewriter.impl.RewriterFilter
+      4 LOG Calling filter: com.adobe.cq.mcm.campaign.servlets.CampaignCopyTracker
+      4 LOG Calling filter: com.day.cq.wcm.core.impl.WCMRequestFilter
+      4 LOG Calling filter: com.adobe.cq.history.impl.HistoryRequestFilter
+      4 LOG Calling filter: com.adobe.granite.optout.impl.OptOutFilter
+      4 LOG Calling filter: com.day.cq.wcm.foundation.forms.impl.FormsHandlingServlet
+      4 LOG Calling filter: com.adobe.cq.social.commons.cors.CORSAuthenticationFilter
+      4 LOG Calling filter: com.day.cq.analytics.provisioning.impl.UserAuthenticationRequestFilter
+      4 LOG Calling filter: org.apache.sling.engine.impl.debug.RequestProgressTrackerLogFilter
+      4 LOG Calling filter: com.day.cq.wcm.mobile.core.impl.redirect.RedirectFilter
+      4 LOG RedirectFilter did not redirect (not redirecting in author mode)
+      4 LOG Calling filter: com.day.cq.wcm.core.impl.warp.TimeWarpFilter
+      4 LOG Calling filter: com.day.cq.wcm.core.impl.AuthoringUIModeServiceImpl
+      5 LOG Calling filter: org.apache.sling.security.impl.ContentDispositionFilter
+      5 LOG Calling filter: com.adobe.granite.csrf.impl.CSRFFilter
+      5 LOG Calling filter: com.adobe.granite.requests.logging.impl.RequestLoggerImpl
+      5 LOG Calling filter: com.day.cq.dam.core.impl.servlet.ActivityRecordHandler
+      5 LOG Calling filter: com.day.cq.dam.core.impl.assetlinkshare.AdhocAssetShareAuthHandler
+      5 LOG Calling filter: com.adobe.cq.social.ugcbase.security.impl.SaferSlingPostServlet
+      5 LOG Applying Componentfilters
+      5 LOG Calling filter: com.day.cq.wcm.core.impl.WCMComponentFilter
+      6 LOG Calling filter: com.day.cq.wcm.core.impl.WCMDebugFilter
+      6 LOG Calling filter: com.day.cq.personalization.impl.TargetComponentFilter
+      6 TIMER_START{org.apache.sling.servlets.get.DefaultGetServlet#0}
+      6 TIMER_END{0,org.apache.sling.servlets.get.DefaultGetServlet#0}
+      6 LOG Filter timing: filter=com.day.cq.personalization.impl.TargetComponentFilter, inner=0, total=0, outer=0
+      6 LOG Filter timing: filter=com.day.cq.wcm.core.impl.WCMDebugFilter, inner=0, total=0, outer=0
+      6 LOG Filter timing: filter=com.adobe.cq.social.ugcbase.security.impl.SaferSlingPostServlet, inner=1, total=1, outer=0
+      6 LOG Filter timing: filter=com.day.cq.dam.core.impl.assetlinkshare.AdhocAssetShareAuthHandler, inner=1, total=1, outer=0
+      6 LOG Filter timing: filter=com.day.cq.dam.core.impl.servlet.ActivityRecordHandler, inner=1, total=1, outer=0
+      6 LOG Filter timing: filter=com.day.cq.dam.core.impl.servlet.DamContentDispositionFilter, inner=1, total=1, outer=0
+      6 LOG Filter timing: filter=com.adobe.cq.dam.webdav.impl.io.DamWebdavRequestFilter, inner=1, total=1, outer=0
+      6 LOG Filter timing: filter=com.adobe.granite.requests.logging.impl.RequestLoggerImpl, inner=1, total=1, outer=0
+      6 LOG Filter timing: filter=com.adobe.granite.csrf.impl.CSRFFilter, inner=1, total=1, outer=0
+      6 LOG Filter timing: filter=org.apache.sling.security.impl.ContentDispositionFilter, inner=1, total=1, outer=0
+      6 LOG Filter timing: filter=com.day.cq.wcm.core.impl.AuthoringUIModeServiceImpl, inner=1, total=2, outer=1
+      6 LOG Filter timing: filter=com.day.cq.wcm.core.impl.warp.TimeWarpFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=com.day.cq.wcm.mobile.core.impl.redirect.RedirectFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=org.apache.sling.engine.impl.debug.RequestProgressTrackerLogFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=com.day.cq.analytics.provisioning.impl.UserAuthenticationRequestFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=com.adobe.cq.social.commons.cors.CORSAuthenticationFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=com.day.cq.wcm.foundation.forms.impl.FormsHandlingServlet, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=com.adobe.granite.optout.impl.OptOutFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=com.adobe.cq.history.impl.HistoryRequestFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=com.day.cq.wcm.core.impl.WCMRequestFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=com.adobe.cq.mcm.campaign.servlets.CampaignCopyTracker, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=org.apache.sling.rewriter.impl.RewriterFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=com.adobe.granite.httpcache.impl.InnerCacheFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=org.apache.sling.i18n.impl.I18NFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=com.adobe.granite.rest.impl.servlet.ApiResourceFilter, inner=2, total=2, outer=0
+      6 LOG Filter timing: filter=org.apache.sling.bgservlets.impl.BackgroundServletStarterFilter, inner=2, total=2, outer=0
+      6 LOG Applying Error filters
+      6 LOG Calling filter: org.apache.sling.i18n.impl.I18NFilter
+      6 LOG Calling filter: org.apache.sling.rewriter.impl.RewriterFilter
+      6 TIMER_START{handleError:status=404}
+      6 TIMER_END{0,handleError:status=404} Using handler /libs/sling/servlet/errorhandler/404.jsp
+     11 LOG Found processor for post processing ProcessorConfiguration: {contentTypes=[text/html], order=-1, active=true, valid=true, processErrorResponse=true, pipeline=(generator=Config(type=htmlparser, config={}), transformers=(Config(type=linkchecker, config={}), Config(type=mobile, config=JcrPropertyMap [node=Node[NodeDelegate{tree=/libs/cq/config/rewriter/default/transformer-mobile: { jcr:primaryType = nt:unstructured, component-optional = true}}], values={jcr:primaryType=nt:unstructured, component-optional=true}]), Config(type=mobiledebug, config=JcrPropertyMap [node=Node[NodeDelegate{tree=/libs/cq/config/rewriter/default/transformer-mobiledebug: { jcr:primaryType = nt:unstructured, component-optional = true}}], values={jcr:primaryType=nt:unstructured, component-optional=true}]), Config(type=contentsync, config=JcrPropertyMap [node=Node[NodeDelegate{tree=/libs/cq/config/rewriter/default/transformer-contentsync: { jcr:primaryType = nt:unstructured, component-optional = true}}], values={jcr:primaryType=nt:unstructured, component-optional=true}]), serializer=Config(type=htmlwriter, config={}))}
+     12 TIMER_END{12,Request Processing} Dumping SlingRequestProgressTracker Entries
+</pre>
+
+        
+        <hr>
+        <address>ApacheSling/2.4 (jetty/9.2.14.v20151106, Java HotSpot(TM) 64-Bit Server VM 1.8.0_31, Linux 3.10.0-327.36.3.el7.x86_64 amd64)</address>
+    </body>
+</html>

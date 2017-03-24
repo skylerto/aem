@@ -11,4 +11,9 @@ require "aem"
 # Pry.start
 
 require "irb"
+
+@opts = Aem::FileParse.new.read
+@info = Aem::Info.new @opts
+@c = Aem::AemCmd.new @info
+
 IRB.start(__FILE__)
