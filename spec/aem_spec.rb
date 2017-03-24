@@ -53,6 +53,7 @@ RSpec.describe Aem::AemCmd do
 
   it 'makes a build package call' do
     exec = @cmd.build_package 'cq-mcm-content'
+    puts exec
     expect(exec).not_to be nil
     expect(exec).not_to eq ''
   end

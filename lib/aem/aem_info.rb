@@ -1,12 +1,17 @@
 module Aem
   class Info
     attr_accessor :url, :username, :password
-      def initialize(hash)
-        hash.each do |k,v|
-          self.instance_variable_set("@#{k}", v.is_a?(Hash) ? Hashit.new(v) : v)
-          self.class.send(:define_method, k, proc{self.instance_variable_get("@#{k}")})
-          self.class.send(:define_method, "#{k}=", proc{|v| self.instance_variable_set("@#{k}", v)})
-        end
-      end
+    def initialize(hash)
+      @url = hash['url']
+      @username = hash['username']
+      @password = hash['password']
+    end
+
+    def to_s
+      res = "URL: #{@url}\n"
+      res += "Username: #{@username}\n"
+      res += "password supressed"
+      res
+    end
   end
 end

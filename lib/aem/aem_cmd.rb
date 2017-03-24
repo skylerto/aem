@@ -43,7 +43,6 @@ module Aem
       xml = Nokogiri::XML(body)
       res = []
       xml.search("//package").each do |pkg|
-        name = pkg.at('name').inner_text
         res << {
           'name' => pkg.at('name').inner_text,
           'group' => pkg.at('group').inner_text,
@@ -87,7 +86,7 @@ module Aem
       c.username = @info.username
       c.password = @info.password
       c.http_post
-      return c
+      return c.body_str
     end
 
     # => curl -u admin:admin -X POST http://localhost:4502/crx/packmgr/service/.json/etc/packages/my_packages/samplepackage.zip?cmd=install
@@ -102,7 +101,7 @@ module Aem
     end
 
     # => curl -u admin:admin http://localhost:4502/etc/packages/my_packages/samplepackage.zip > <local filepath>
-    def download_package package, path
+    def download_package package, path='./'
       c = Curl::Easy.new("http://#{@info.url}/#{@download_package_path}/#{package}.zip")
       c.http_auth_types = :basic
       c.username = @info.username
