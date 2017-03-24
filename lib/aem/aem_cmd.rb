@@ -11,8 +11,8 @@ module Aem
       @info = info
       @help_path = 'crx/packmgr/service.jsp?cmd=help'
       @list_package_path = 'crx/packmgr/service.jsp?cmd=ls'
-      @build_package_path = 'crx/packmgr/service/.json/etc/packages/my_packages'
-      @download_package_path = 'etc/packages/my_packages'
+      @build_package_path = 'crx/packmgr/service/.json/etc/packages'
+      @download_package_path = 'etc/packages'
       @upload_package_path = 'crx/packmgr/service.jsp'
       @tree_activate_path = 'etc/replication/treeactivation.html'
     end
@@ -99,7 +99,7 @@ module Aem
     def build_packages packages
       res = Hash.new
       packages.each do |package|
-        res[package] = self.build_package package
+        res[package] = self.build_package(package)
       end
       return res
     end
@@ -108,8 +108,9 @@ module Aem
     #
     # @param package [String] the name of the package to build.
     # @return [String] the response from the server
-    def build_package package
-      pack = "#{@build_package_path}/#{package}.zip"
+    def build_package package, group='my_packages'
+      pack = "#{@build_package_path}/#{group}/#{package}.zip"
+      puts pack
       c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=build")
       c.http_auth_types = :basic
       c.username = @info.username
@@ -125,8 +126,8 @@ module Aem
     #
     # @param package [String] the name of the package to install.
     # @return [Curl::Easy] the Curl object.
-    def install_package package
-      pack = "#{@build_package_path}/#{package}.zip"
+    def install_package package, group='my_packages'
+      pack = "#{@build_package_path}/#{group}/#{package}.zip"
       c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=install")
       c.http_auth_types = :basic
       c.username = @info.username
