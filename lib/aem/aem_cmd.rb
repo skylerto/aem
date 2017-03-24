@@ -96,13 +96,13 @@ module Aem
     #
     # @param packages [Array] an array of package names to build
     # @return [Hash] hash of package build info
-    def build_packages packages
-      res = Hash.new
-      packages.each do |package|
-        res[package] = self.build_package(package)
-      end
-      return res
-    end
+    # def build_packages packages
+    #   res = Hash.new
+    #   packages.each do |package|
+    #     res[package] = self.build_package(package)
+    #   end
+    #   return res
+    # end
 
     # Build a single package
     #

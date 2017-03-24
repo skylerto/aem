@@ -39,11 +39,11 @@ RSpec.describe Aem::AemCmd do
     expect(exec).not_to eq ''
   end
 
-  it 'makes a list packages call' do
-    exec = @cmd.list_packages 'name'
-    expect(exec).not_to be nil
-    expect(exec).not_to eq ''
-  end
+  # it 'makes a list packages call' do
+  #   exec = @cmd.list_packages 'name'
+  #   expect(exec).not_to be nil
+  #   expect(exec).not_to eq ''
+  # end
 
   it 'will list the package info' do
     exec = @cmd.package_info 'cq-mcm-content'
