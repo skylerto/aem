@@ -40,13 +40,13 @@ module Aem
         yes = ask("#{ENV['HOME']}/.aem.yaml exists, would you like to overwrite it (Yn)?")
         if yes && yes.eql?('Y')
           puts "overwriting: #{contents.to_yaml} to #{ENV['HOME']}/.aem.yaml"
-          opts = Aem::FileParse.new.write contents
+          opts = Aem::FileParse.new.create contents
         else
           puts "Ok, we'll keep your config"
         end
       else
         puts "writing: #{contents.to_yaml} to #{ENV['HOME']}/.aem.yaml"
-        opts = Aem::FileParse.new.write contents
+        opts = Aem::FileParse.new.create contents
       end
     end
 

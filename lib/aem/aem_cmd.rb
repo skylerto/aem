@@ -234,7 +234,7 @@ module Aem
         Curl::PostField.file('file', file),
         Curl::PostField.content('name', name)
       )
-      return c
+      return c.body_str
     end
   end
 end
