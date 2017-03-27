@@ -227,7 +227,7 @@ module Aem
     # @param file [String] the zip file to upload
     # @param name [String] the name of the package in AEM
     # @return [Curl::Easy] the curl output.
-    def upload_package(file, name)
+    def upload_package(file, name, force='true', install='false')
       c = Curl::Easy.new("http://#{@info.url}/#{@upload_package_path}")
       c.http_auth_types = :basic
       c.username = @info.username
@@ -235,7 +235,9 @@ module Aem
       c.multipart_form_post = true
       c.http_post(
         Curl::PostField.file('file', file),
-        Curl::PostField.content('name', name)
+        Curl::PostField.content('name', name),
+        Curl::PostField.content('force', force),
+        Curl::PostField.content('install', install)
       )
       return c
     end

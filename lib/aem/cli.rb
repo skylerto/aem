@@ -21,8 +21,19 @@ module Aem
 
     # gets the info used in the configuration
     desc "info", "gets the info used in the configuration"
+    option :profile
     def info
-      puts @info
+      profile = options[:profile]
+      res = @info
+      if profile
+        opts = Aem::FileParse.new.read profile
+        if opts.nil?
+          puts 'must have a config file: run aem setup'
+        else
+          res = Aem::Info.new opts
+        end
+      end
+      puts res
     end
 
     # starts the setup process
@@ -96,8 +107,22 @@ module Aem
     # tree activates a list of PATHS
     desc "activate PATHS", "tree activates a list of PATHS"
     option :profile
+    option :paths
+    option :all
     def activate *paths
-      puts cmd(options).activate_paths(paths)
+      modified = options[:all] ? 'false' : 'true'
+      res = cmd(options).activate_paths(paths, modified)
+      res = res.flatten unless res.nil?
+      if options[:paths]
+        out = []
+        res.each do |path|
+          if path['status'].eql? 'Activate'
+            out << path['path']
+          end
+        end
+        res = out
+      end
+      puts res
     end
 
     private
