@@ -52,49 +52,49 @@ module Aem
 
     # gets a list of all the packages available on AEM server
     desc "packages", "gets a list of all the packages available on AEM server"
-    option :url
+    option :profile
     def packages
       puts cmd(options).list_packages
     end
 
     # searches for a package based on VALUE, KEY defaulting to name property
     desc "package VALUE KEY", "searches for a package based on VALUE, KEY defaulting to name property"
-    option :url
+    option :profile
     def package name, property='name'
       puts cmd(options).package_info name, property
     end
 
     # builds a NAME
     desc "build NAME GROUP", "builds a NAME package from a GROUP"
-    option :url
+    option :profile
     def build package, group=''
       puts cmd(options).build_package package, group
     end
 
     # downloads a specific NAME to a specific PATH defaulting to the current directory
     desc "download NAME GROUP PATH", "downloads a specific NAME package from a group, to a specific PATH defaulting to the current directory"
-    option :url
+    option :profile
     def download package, group='', path='./'
       puts cmd(options).download_package package, group, path
     end
 
     # uploads the PATH with the NAME
     desc "upload PATH NAME", "uploads the PATH with the NAME"
-    option :url
+    option :profile
     def upload file, name
       puts cmd(options).upload_package file, name
     end
 
     # installs a NAME
     desc "install NAME GROUP", "installs a NAME package from a GROUP"
-    option :url
+    option :profile
     def install package, group=''
       puts cmd(options).install_package package, group
     end
 
     # tree activates a list of PATHS
     desc "activate PATHS", "tree activates a list of PATHS"
-    option :url
+    option :profile
     def activate *paths
       puts cmd(options).activate_paths(paths)
     end
@@ -102,12 +102,15 @@ module Aem
     private
 
     def cmd options
-      url = options[:url]
-      res = @c
-      if url
-        info = @info
-        info.url = url
-        res = Aem::AemCmd.new info
+      profile = options[:profile]
+      if profile
+        opts = Aem::FileParse.new.read profile
+        if opts.nil?
+          puts 'must have a config file: run aem setup'
+        else
+          info = Aem::Info.new opts
+          res = Aem::AemCmd.new info
+        end
       end
       return res
     end

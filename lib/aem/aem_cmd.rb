@@ -1,11 +1,7 @@
 require 'curb'
 require 'nokogiri'
 require 'zip/zip'
-require 'stringio'
-class StringIO
-  def path
-  end
-end
+require_relative './package'
 
 module Aem
 
@@ -67,19 +63,19 @@ module Aem
       xml = Nokogiri::XML(body)
       res = []
       xml.search("//package").each do |pkg|
-        res << {
-          'name' => pkg.at('name').inner_text,
-          'group' => pkg.at('group').inner_text,
-          'version' => pkg.at('version').inner_text,
-          'downloadName' => pkg.at('downloadName').inner_text,
-          'size' => pkg.at('size').inner_text,
-          'created' => pkg.at('created').inner_text,
-          'createdBy' => pkg.at('createdBy').inner_text,
-          'lastModified' => pkg.at('lastModified').inner_text,
-          'lastModifiedBy' => pkg.at('lastModifiedBy').inner_text,
-          'lastUnpacked' => pkg.at('lastUnpacked').inner_text,
-          'lastUnpackedBy' => pkg.at('lastUnpackedBy').inner_text
-        }
+        pack = Aem::Package.new
+        pack.name = pkg.at('name').inner_text
+        pack.group = pkg.at('group').inner_text
+        pack.version = pkg.at('version').inner_text
+        pack.downloadName = pkg.at('downloadName').inner_text
+        pack.size = pkg.at('size').inner_text
+        pack.created = pkg.at('created').inner_text
+        pack.createdBy = pkg.at('createdBy').inner_text
+        pack.lastModified = pkg.at('lastModified').inner_text
+        pack.lastModifiedBy = pkg.at('lastModifiedBy').inner_text
+        pack.lastUnpacked = pkg.at('lastUnpacked').inner_text
+        pack.lastUnpackedBy = pkg.at('lastUnpackedBy').inner_text
+        res << pack
       end
       if value.eql? ''
         return res
