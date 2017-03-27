@@ -89,7 +89,8 @@ module Aem
     desc "install NAME GROUP", "installs a NAME package from a GROUP"
     option :profile
     def install package, group=''
-      puts cmd(options).install_package(package, group).body_str
+      # puts cmd(options).install_package(package, group).body_str
+      puts cmd(options).install_package(package, group)
     end
 
     # tree activates a list of PATHS

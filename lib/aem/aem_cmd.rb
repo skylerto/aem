@@ -1,5 +1,6 @@
 require 'curb'
 require 'nokogiri'
+require 'set'
 require_relative './package'
 
 module Aem
@@ -13,6 +14,7 @@ module Aem
       @help_path = 'crx/packmgr/service.jsp?cmd=help'
       @list_package_path = 'crx/packmgr/service.jsp?cmd=ls'
       @build_package_path = 'crx/packmgr/service/.json/etc/packages'
+      @install_package_path = 'crx/packmgr/service/.xml/etc/packages'
       @download_package_path = 'etc/packages'
       @upload_package_path = 'crx/packmgr/service.jsp'
       @tree_activate_path = 'etc/replication/treeactivation.html'
@@ -127,13 +129,22 @@ module Aem
     # @param package [String] the name of the package to install.
     # @return [Curl::Easy] the Curl object.
     def install_package package, group='my_packages'
-      pack = "#{@build_package_path}/#{group}/#{package}.zip"
+      pack = "#{@install_package_path}/#{group}/#{package}.zip"
       c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=install")
       c.http_auth_types = :basic
       c.username = @info.username
       c.password = @info.password
       c.http_post
-      return c
+      res = Set.new
+      c.body_str.split('<br>').each do |br|
+        content = Nokogiri::HTML(br)
+        path = content.css('.\-').text.strip
+        path = path.slice(2, path.size)
+        res << path unless path.nil? || path.empty?
+      end
+          # status = content.css('.action').text.strip.split(' ')[0] || nil
+
+      return res.to_a
     end
 
     # Activate a path
