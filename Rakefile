@@ -9,7 +9,7 @@ task :default => :spec
 namespace :deploy do
   task :nexus do
     nexus = YAML.load_file('secrets.yaml')['nexus']
-    name = `ls -Art pkg/ | tail -n 1`
+    name = `ls -Art pkg/ | tail -n 1`.strip
     file = "pkg/#{name}"
     url = "#{nexus['url']}#{name}"
     cmd = `curl -v -u #{nexus['username']}:#{nexus['password']} --upload-file #{file} #{url}`
