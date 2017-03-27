@@ -43,7 +43,7 @@ module Aem
     def package_info name, property='name'
       packages = self.list_packages
       res = packages.select do |pkg|
-        pkg[property].eql? name
+        pkg.instance_variable_get("@#{property}").eql? name
       end
       return res
     end
@@ -112,7 +112,6 @@ module Aem
     # @return [String] the response from the server
     def build_package package, group='my_packages'
       pack = "#{@build_package_path}/#{group}/#{package}.zip"
-      puts pack
       c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=build")
       c.http_auth_types = :basic
       c.username = @info.username
@@ -206,9 +205,7 @@ module Aem
       url = "http://#{@info.url}/#{@download_package_path}/#{group}/#{package}.zip"
       pack = "#{path}/#{package}.zip"
       cmd = "curl -u #{@info.username}:#{@info.password} #{url} > #{pack}"
-      puts cmd
       value = `#{cmd}`
-      puts value
       return pack
     end
 

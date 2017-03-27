@@ -53,16 +53,15 @@ RSpec.describe Aem::AemCmd do
 
   it 'makes a build package call' do
     exec = @cmd.build_package 'cq-mcm-content', 'day/cq60/product'
-    puts exec
     expect(exec).not_to be nil
     expect(exec).not_to eq ''
   end
 
-  it 'makes a build packages call' do
-    exec = @cmd.build_packages ['cq-media-content', 'cq-mcm-content']
-    expect(exec).not_to be nil
-    expect(exec).not_to eq ''
-  end
+  # it 'makes a build packages call' do
+  #   exec = @cmd.build_packages ['cq-media-content', 'cq-mcm-content']
+  #   expect(exec).not_to be nil
+  #   expect(exec).not_to eq ''
+  # end
 
   it 'download a package' do
     exec = @cmd.download_package 'cq-media-content', '.'
