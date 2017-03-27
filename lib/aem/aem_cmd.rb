@@ -1,6 +1,5 @@
 require 'curb'
 require 'nokogiri'
-require 'zip/zip'
 require_relative './package'
 
 module Aem
@@ -117,7 +116,7 @@ module Aem
       c.username = @info.username
       c.password = @info.password
       c.http_post
-      return c.body_str
+      return c
     end
 
     # Install a package
@@ -167,7 +166,7 @@ module Aem
         res = []
         c.body_str.split('<br>').each do |br|
           content = Nokogiri::HTML(br)
-          status = content.css('.action').text
+          status = content.css('.action').text.strip.split(' ')[0] || nil
           path = content.css('.path')
           path = path.text.strip.split(' ')[0] || nil
             res << {
@@ -205,7 +204,7 @@ module Aem
       url = "http://#{@info.url}/#{@download_package_path}/#{group}/#{package}.zip"
       pack = "#{path}/#{package}.zip"
       cmd = "curl -u #{@info.username}:#{@info.password} #{url} > #{pack}"
-      value = `#{cmd}`
+      `#{cmd}`
       return pack
     end
 
@@ -227,7 +226,7 @@ module Aem
         Curl::PostField.file('file', file),
         Curl::PostField.content('name', name)
       )
-      return c.body_str
+      return c
     end
   end
 end

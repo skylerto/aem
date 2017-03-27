@@ -68,7 +68,7 @@ module Aem
     desc "build NAME GROUP", "builds a NAME package from a GROUP"
     option :profile
     def build package, group=''
-      puts cmd(options).build_package package, group
+      puts cmd(options).build_package(package, group).body_str
     end
 
     # downloads a specific NAME to a specific PATH defaulting to the current directory
@@ -82,14 +82,14 @@ module Aem
     desc "upload PATH NAME", "uploads the PATH with the NAME"
     option :profile
     def upload file, name
-      puts cmd(options).upload_package file, name
+      puts cmd(options).upload_package(file, name).body_str
     end
 
     # installs a NAME
     desc "install NAME GROUP", "installs a NAME package from a GROUP"
     option :profile
     def install package, group=''
-      puts cmd(options).install_package package, group
+      puts cmd(options).install_package(package, group).body_str
     end
 
     # tree activates a list of PATHS
