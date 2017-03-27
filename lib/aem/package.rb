@@ -1,4 +1,8 @@
 module Aem
+
+  # Domain Model an AEM Package
+  #
+  # @author Skyler Layne
   class Package
     attr_accessor :name
     attr_accessor :group
