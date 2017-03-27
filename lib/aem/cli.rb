@@ -96,8 +96,20 @@ module Aem
     # tree activates a list of PATHS
     desc "activate PATHS", "tree activates a list of PATHS"
     option :profile
+    option :paths
     def activate *paths
-      puts cmd(options).activate_paths(paths)
+      res = cmd(options).activate_paths(paths)
+      res = res.flatten unless res.nil?
+      if options[:paths]
+        out = []
+        res.each do |path|
+          if path['status'].eql? 'Activate'
+            out << path['path']
+          end
+        end
+        res = out
+      end
+      puts res
     end
 
     private
