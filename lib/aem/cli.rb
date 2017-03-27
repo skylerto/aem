@@ -103,6 +103,7 @@ module Aem
 
     def cmd options
       profile = options[:profile]
+      res = @c
       if profile
         opts = Aem::FileParse.new.read profile
         if opts.nil?
