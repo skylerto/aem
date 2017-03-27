@@ -1,4 +1,10 @@
+require 'net/http'
+require 'net/https'
+require 'uri'
+
 module Aem
+
+  DOWNLOAD_PATH = 'etc/packages'
 
   # Domain Model an AEM Package
   #
@@ -15,11 +21,41 @@ module Aem
     attr_accessor :lastModifiedBy
     attr_accessor :lastUnpacked
     attr_accessor :lastUnpackedBy
+    attr_accessor :info
 
-    def initialize
-
+    def initialize info=nil
+      @info = info
     end
 
+
+    # Download a package
+    #
+    # @param path [String] the path to the directory to download to.
+    def download path='.'
+      if @info.nil?
+        raise "Info #{@info} cannot be null"
+      end
+      url = "http://#{@info.url}/#{DOWNLOAD_PATH}/#{@group}/#{@downloadName}"
+      pack = "#{path}/#{@downloadName}"
+
+      uri = URI(url)
+      Net::HTTP.start(
+        uri.host, uri.port,
+        :use_ssl => uri.scheme == 'https',
+        :verify_mode => OpenSSL::SSL::VERIFY_NONE
+      ) do |http|
+        request = Net::HTTP::Get.new uri.request_uri
+        request.basic_auth @info.username, @info.password
+        response = http.request request
+        File.open(pack, 'wb') { |file| file.write(response.body) }
+        end
+      return pack
+    end
+
+
+    # A string representation of the current object
+    #
+    # @return [String] represent the package as a string.
     def to_s
       res = "name: #{@name}\n"
       res += "group: #{@group}\n"
@@ -34,6 +70,5 @@ module Aem
       res += "lastUnpackedBy: #{@lastUnpackedBy}\n\n"
       return res
     end
-
   end
 end

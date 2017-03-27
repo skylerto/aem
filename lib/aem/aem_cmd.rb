@@ -15,7 +15,6 @@ module Aem
       @list_package_path = 'crx/packmgr/service.jsp?cmd=ls'
       @build_package_path = 'crx/packmgr/service/.json/etc/packages'
       @install_package_path = 'crx/packmgr/service/.xml/etc/packages'
-      @download_package_path = 'etc/packages'
       @upload_package_path = 'crx/packmgr/service.jsp'
       @tree_activate_path = 'etc/replication/treeactivation.html'
     end
@@ -91,22 +90,6 @@ module Aem
       end
     end
 
-    # Build a list of packages
-    #
-    #
-    # @example
-    #   equivalent to curl -u admin:admin -X POST http://localhost:4502/crx/packmgr/service/.json/etc/packages/my_packages/samplepackage.zip?cmd=build
-    #
-    # @param packages [Array] an array of package names to build
-    # @return [Hash] hash of package build info
-    # def build_packages packages
-    #   res = Hash.new
-    #   packages.each do |package|
-    #     res[package] = self.build_package(package)
-    #   end
-    #   return res
-    # end
-
     # Build a single package
     #
     # @param package [String] the name of the package to build.
@@ -122,9 +105,6 @@ module Aem
     end
 
     # Install a package
-    #
-    # @example
-    #   equivalent to curl -u admin:admin -X POST http://localhost:4502/crx/packmgr/service/.json/etc/packages/my_packages/samplepackage.zip?cmd=install
     #
     # @param package [String] the name of the package to install.
     # @return [Curl::Easy] the Curl object.
@@ -142,15 +122,10 @@ module Aem
         path = path.slice(2, path.size)
         res << path unless path.nil? || path.empty?
       end
-          # status = content.css('.action').text.strip.split(' ')[0] || nil
-
       return res.to_a
     end
 
     # Activate a path
-    #
-    # @example
-    #   curl -u admin:admin -F cmd=activate -F ignoredeactivated=true -F onlymodified=true -F path=/content/geometrixx/en/community http://localhost:4502/etc/replication/treeactivation.html
     #
     # @param path [String] the path to activate
     # @param modified [Boolean] boolean to activitate only modified content,
@@ -180,10 +155,10 @@ module Aem
           status = content.css('.action').text.strip.split(' ')[0] || nil
           path = content.css('.path')
           path = path.text.strip.split(' ')[0] || nil
-            res << {
-              'path' => path,
-              'status' => status
-            } unless path.nil?
+          res << {
+            'path' => path,
+            'status' => status
+          } unless path.nil?
         end
       end
       return res
@@ -205,18 +180,16 @@ module Aem
 
     # Download a package
     #
-    # @example
-    #   curl -u admin:admin http://localhost:4502/etc/packages/my_packages/samplepackage.zip > <local filepath>
-    #
     # @param package [String] the name of the package to download.
     # @param path [String] the path to activate.
     # @return [String] the path to the downloaded zip.
-    def download_package package, group='my_packages', path='.'
-      url = "http://#{@info.url}/#{@download_package_path}/#{group}/#{package}.zip"
-      pack = "#{path}/#{package}.zip"
-      cmd = "curl -u #{@info.username}:#{@info.password} #{url} > #{pack}"
-      `#{cmd}`
-      return pack
+    def download_package package, path='.'
+      pack = self.package_info(package) if package.index('.zip').nil?
+      pack = self.package_info(package, 'downloadName') unless package.index('.zip').nil?
+      raise "Multiple packages found, Please use the downloadName \n #{pack}" if pack.size > 1
+      pack = pack.first
+      pack.info = @info
+      return pack.download(path)
     end
 
     # Upload a package with a name

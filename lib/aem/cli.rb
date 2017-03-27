@@ -85,8 +85,8 @@ module Aem
     # downloads a specific NAME to a specific PATH defaulting to the current directory
     desc "download NAME GROUP PATH", "downloads a specific NAME package from a group, to a specific PATH defaulting to the current directory"
     option :profile
-    def download package, group='', path='./'
-      puts cmd(options).download_package package, group, path
+    def download package, path='.'
+      puts cmd(options).download_package(package, path)
     end
 
     # uploads the PATH with the NAME
