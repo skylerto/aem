@@ -6,6 +6,7 @@ module Aem
 
   DOWNLOAD_PATH = 'etc/packages'
   BUILD_PATH = 'crx/packmgr/service/.json/etc/packages'
+  INSTALL_PATH = 'crx/packmgr/service/.xml/etc/packages'
 
   # Domain Model an AEM Package
   #
@@ -26,24 +27,6 @@ module Aem
 
     def initialize info=nil
       @info = info
-    end
-
-    def install
-      pack = "#{@install_package_path}/#{@group}/#{@downloadName}"
-      c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=install")
-      c.http_auth_types = :basic
-      c.username = @info.username
-      c.password = @info.password
-      c.http_post
-      res = Set.new
-      c.body_str.split('<br>').each do |br|
-        content = Nokogiri::HTML(br)
-        path = content.css('.\-').text.strip
-        path = path.slice(2, path.size)
-        res << path unless path.nil? || path.empty?
-      end
-      return res.to_a
-
     end
 
     # Download the package
@@ -68,6 +51,22 @@ module Aem
       return pack
     end
 
+    # Install packages returning a list of installed paths.
+    #
+    # @return [Array] an array of string paths.
+    def install
+      raise "Info #{@info} cannot be null" if @info.nil?
+      pack = "#{INSTALL_PATH}/#{@group}/#{@downloadName}"
+      url = "http://#{@info.url}/#{pack}?cmd=install"
+      uri = URI(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.basic_auth @info.username, @info.password
+      request.content_type = 'application/x-www-form-urlencoded'
+      res = http.request(request)
+      return parse_install_paths res.body
+    end
+
     # Build the package
     #
     # @return [Net:HTTP] response object.
@@ -85,7 +84,6 @@ module Aem
       return res
     end
 
-
     # A string representation of the current object
     #
     # @return [String] represent the package as a string.
@@ -102,6 +100,18 @@ module Aem
       res += "lastUnpacked: #{@lastUnpacked}\n"
       res += "lastUnpackedBy: #{@lastUnpackedBy}\n\n"
       return res
+    end
+    private
+
+    def parse_install_paths input
+      res = Set.new
+      input.split('<br>').each do |br|
+        content = Nokogiri::HTML(br)
+        path = content.css('.\-').text.strip
+        path = path.slice(2, path.size)
+        res << path unless path.nil? || path.empty?
+      end
+      return res.to_a
     end
   end
 end

@@ -13,9 +13,39 @@ module Aem
       @info = info
       @help_path = 'crx/packmgr/service.jsp?cmd=help'
       @list_package_path = 'crx/packmgr/service.jsp?cmd=ls'
-      @install_package_path = 'crx/packmgr/service/.xml/etc/packages'
       @upload_package_path = 'crx/packmgr/service.jsp'
       @tree_activate_path = 'etc/replication/treeactivation.html'
+    end
+
+    # Build a single package
+    #
+    # @param package [String] the name of the package to build.
+    # @return [String] the response from the server
+    def build_package package
+      pack = get_package package
+      pack.info = @info
+      return pack.build
+    end
+
+    # Install a package
+    #
+    # @param package [String] the name of the package to install.
+    # @return [Curl::Easy] the Curl object.
+    def install_package package
+      pack = get_package package
+      pack.info = @info
+      return pack.install
+    end
+
+    # Download a package
+    #
+    # @param package [String] the name of the package to download.
+    # @param path [String] the path to activate.
+    # @return [String] the path to the downloaded zip.
+    def download_package package, path='.'
+      pack = get_package package
+      pack.info = @info
+      return pack.download(path)
     end
 
     # Grabs the help menu from AEM
@@ -87,37 +117,6 @@ module Aem
         end
         return other
       end
-    end
-
-    # Build a single package
-    #
-    # @param package [String] the name of the package to build.
-    # @return [String] the response from the server
-    def build_package package
-      pack = get_package package
-      pack.info = @info
-      return pack.build
-    end
-
-    # Install a package
-    #
-    # @param package [String] the name of the package to install.
-    # @return [Curl::Easy] the Curl object.
-    def install_package package
-      pack = get_package package
-      pack.info = @info
-      return pack.install
-    end
-
-    # Download a package
-    #
-    # @param package [String] the name of the package to download.
-    # @param path [String] the path to activate.
-    # @return [String] the path to the downloaded zip.
-    def download_package package, path='.'
-      pack = get_package package
-      pack.info = @info
-      return pack.download(path)
     end
 
     # Upload a package with a name
