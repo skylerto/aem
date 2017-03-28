@@ -5,6 +5,7 @@ require 'uri'
 module Aem
 
   DOWNLOAD_PATH = 'etc/packages'
+  BUILD_PATH = 'crx/packmgr/service/.json/etc/packages'
 
   # Domain Model an AEM Package
   #
@@ -28,7 +29,7 @@ module Aem
     end
 
 
-    # Download a package
+    # Download the package
     #
     # @param path [String] the path to the directory to download to.
     def download path='.'
@@ -48,8 +49,24 @@ module Aem
         request.basic_auth @info.username, @info.password
         response = http.request request
         File.open(pack, 'wb') { |file| file.write(response.body) }
-        end
+      end
       return pack
+    end
+
+    # Build the package
+    #
+    # @return [Net:HTTP] response object.
+    def build
+      pack = "#{BUILD_PATH}/#{@group}/#{@downloadName}"
+      url = "http://#{@info.url}/#{pack}?cmd=build"
+      uri = URI(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.basic_auth @info.username, @info.password
+      request.content_type = 'application/x-www-form-urlencoded'
+      res = http.request(request)
+      raise "Failed to build package #{@downloadName}, server responded with code: #{res.code} and message #{res.body}" if res.code.to_i > 200
+      return res
     end
 
 

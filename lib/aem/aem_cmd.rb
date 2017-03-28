@@ -13,7 +13,6 @@ module Aem
       @info = info
       @help_path = 'crx/packmgr/service.jsp?cmd=help'
       @list_package_path = 'crx/packmgr/service.jsp?cmd=ls'
-      @build_package_path = 'crx/packmgr/service/.json/etc/packages'
       @install_package_path = 'crx/packmgr/service/.xml/etc/packages'
       @upload_package_path = 'crx/packmgr/service.jsp'
       @tree_activate_path = 'etc/replication/treeactivation.html'
@@ -95,13 +94,9 @@ module Aem
     # @param package [String] the name of the package to build.
     # @return [String] the response from the server
     def build_package package, group='my_packages'
-      pack = "#{@build_package_path}/#{group}/#{package}.zip"
-      c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=build")
-      c.http_auth_types = :basic
-      c.username = @info.username
-      c.password = @info.password
-      c.http_post
-      return c
+      pack = get_package package
+      pack.info = @info
+      return pack.build
     end
 
     # Install a package
@@ -123,6 +118,37 @@ module Aem
         res << path unless path.nil? || path.empty?
       end
       return res.to_a
+    end
+
+    # Download a package
+    #
+    # @param package [String] the name of the package to download.
+    # @param path [String] the path to activate.
+    # @return [String] the path to the downloaded zip.
+    def download_package package, path='.'
+      pack = get_package package
+      pack.info = @info
+      return pack.download(path)
+    end
+
+    # Upload a package with a name
+    #
+    # @param file [String] the zip file to upload
+    # @param name [String] the name of the package in AEM
+    # @return [Curl::Easy] the curl output.
+    def upload_package(file, name, force='true', install='false')
+      c = Curl::Easy.new("http://#{@info.url}/#{@upload_package_path}")
+      c.http_auth_types = :basic
+      c.username = @info.username
+      c.password = @info.password
+      c.multipart_form_post = true
+      c.http_post(
+        Curl::PostField.file('file', file),
+        Curl::PostField.content('name', name),
+        Curl::PostField.content('force', force),
+        Curl::PostField.content('install', install)
+      )
+      return c
     end
 
     # Activate a path
@@ -178,41 +204,14 @@ module Aem
       return res
     end
 
-    # Download a package
-    #
-    # @param package [String] the name of the package to download.
-    # @param path [String] the path to activate.
-    # @return [String] the path to the downloaded zip.
-    def download_package package, path='.'
+    private
+
+    def get_package package
       pack = self.package_info(package) if package.index('.zip').nil?
       pack = self.package_info(package, 'downloadName') unless package.index('.zip').nil?
       raise "Multiple packages found, Please use the downloadName \n #{pack}" if pack.size > 1
-      pack = pack.first
-      pack.info = @info
-      return pack.download(path)
-    end
-
-    # Upload a package with a name
-    #
-    # @example
-    #   curl -u admin:admin -F file=@"C:\sample\samplepackage.zip" -F name="samplepackage" -F force=true -F install=false http://localhost:4502/crx/packmgr/service.jsp
-    #
-    # @param file [String] the zip file to upload
-    # @param name [String] the name of the package in AEM
-    # @return [Curl::Easy] the curl output.
-    def upload_package(file, name, force='true', install='false')
-      c = Curl::Easy.new("http://#{@info.url}/#{@upload_package_path}")
-      c.http_auth_types = :basic
-      c.username = @info.username
-      c.password = @info.password
-      c.multipart_form_post = true
-      c.http_post(
-        Curl::PostField.file('file', file),
-        Curl::PostField.content('name', name),
-        Curl::PostField.content('force', force),
-        Curl::PostField.content('install', install)
-      )
-      return c
+      raise "No packages found with name or downloadName #{package}" if pack.size <= 0
+      return pack.first
     end
   end
 end
