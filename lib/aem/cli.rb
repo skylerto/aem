@@ -1,3 +1,4 @@
+require 'json'
 require 'thor'
 require 'yaml'
 
@@ -79,7 +80,7 @@ module Aem
     desc "build NAME GROUP", "builds a NAME package from a GROUP"
     option :profile
     def build package, group=''
-      puts cmd(options).build_package(package, group).body_str
+      puts JSON.parse cmd(options).build_package(package, group).body
     end
 
     # downloads a specific NAME to a specific PATH defaulting to the current directory
