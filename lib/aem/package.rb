@@ -28,14 +28,29 @@ module Aem
       @info = info
     end
 
+    def install
+      pack = "#{@install_package_path}/#{@group}/#{@downloadName}"
+      c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=install")
+      c.http_auth_types = :basic
+      c.username = @info.username
+      c.password = @info.password
+      c.http_post
+      res = Set.new
+      c.body_str.split('<br>').each do |br|
+        content = Nokogiri::HTML(br)
+        path = content.css('.\-').text.strip
+        path = path.slice(2, path.size)
+        res << path unless path.nil? || path.empty?
+      end
+      return res.to_a
+
+    end
 
     # Download the package
     #
     # @param path [String] the path to the directory to download to.
     def download path='.'
-      if @info.nil?
-        raise "Info #{@info} cannot be null"
-      end
+      raise "Info #{@info} cannot be null" if @info.nil?
       url = "http://#{@info.url}/#{DOWNLOAD_PATH}/#{@group}/#{@downloadName}"
       pack = "#{path}/#{@downloadName}"
 
@@ -57,6 +72,7 @@ module Aem
     #
     # @return [Net:HTTP] response object.
     def build
+      raise "Info #{@info} cannot be null" if @info.nil?
       pack = "#{BUILD_PATH}/#{@group}/#{@downloadName}"
       url = "http://#{@info.url}/#{pack}?cmd=build"
       uri = URI(url)

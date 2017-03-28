@@ -93,7 +93,7 @@ module Aem
     #
     # @param package [String] the name of the package to build.
     # @return [String] the response from the server
-    def build_package package, group='my_packages'
+    def build_package package
       pack = get_package package
       pack.info = @info
       return pack.build
@@ -103,21 +103,10 @@ module Aem
     #
     # @param package [String] the name of the package to install.
     # @return [Curl::Easy] the Curl object.
-    def install_package package, group='my_packages'
-      pack = "#{@install_package_path}/#{group}/#{package}.zip"
-      c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=install")
-      c.http_auth_types = :basic
-      c.username = @info.username
-      c.password = @info.password
-      c.http_post
-      res = Set.new
-      c.body_str.split('<br>').each do |br|
-        content = Nokogiri::HTML(br)
-        path = content.css('.\-').text.strip
-        path = path.slice(2, path.size)
-        res << path unless path.nil? || path.empty?
-      end
-      return res.to_a
+    def install_package package
+      pack = get_package package
+      pack.info = @info
+      return pack.install
     end
 
     # Download a package
