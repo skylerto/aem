@@ -77,7 +77,7 @@ module Aem
     end
 
     # builds a NAME
-    desc "build NAM ", "builds a NAME package"
+    desc "build NAME", "builds a NAME package"
     option :profile
     def build package, group=''
       puts JSON.parse cmd(options).build_package(package).body
@@ -98,10 +98,9 @@ module Aem
     end
 
     # installs a NAME
-    desc "install NAME GROUP", "installs a NAME package from a GROUP"
+    desc "install NAME", "installs a NAME package from a GROUP"
     option :profile
     def install package
-      # puts cmd(options).install_package(package, group).body_str
       puts cmd(options).install_package(package)
     end
 
