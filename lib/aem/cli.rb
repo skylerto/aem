@@ -77,10 +77,10 @@ module Aem
     end
 
     # builds a NAME
-    desc "build NAME GROUP", "builds a NAME package from a GROUP"
+    desc "build NAM ", "builds a NAME package"
     option :profile
     def build package, group=''
-      puts JSON.parse cmd(options).build_package(package, group).body
+      puts JSON.parse cmd(options).build_package(package).body
     end
 
     # downloads a specific NAME to a specific PATH defaulting to the current directory
