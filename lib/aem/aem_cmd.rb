@@ -93,7 +93,7 @@ module Aem
     #
     # @param package [String] the name of the package to build.
     # @return [String] the response from the server
-    def build_package package, group='my_packages'
+    def build_package package
       pack = get_package package
       pack.info = @info
       return pack.build
