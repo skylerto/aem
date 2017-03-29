@@ -13,9 +13,39 @@ module Aem
       @info = info
       @help_path = 'crx/packmgr/service.jsp?cmd=help'
       @list_package_path = 'crx/packmgr/service.jsp?cmd=ls'
-      @install_package_path = 'crx/packmgr/service/.xml/etc/packages'
       @upload_package_path = 'crx/packmgr/service.jsp'
       @tree_activate_path = 'etc/replication/treeactivation.html'
+    end
+
+    # Build a single package
+    #
+    # @param package [String] the name of the package to build.
+    # @return [String] the response from the server
+    def build_package package
+      pack = get_package package
+      pack.info = @info
+      return pack.build
+    end
+
+    # Install a package
+    #
+    # @param package [String] the name of the package to install.
+    # @return [Curl::Easy] the Curl object.
+    def install_package package
+      pack = get_package package
+      pack.info = @info
+      return pack.install
+    end
+
+    # Download a package
+    #
+    # @param package [String] the name of the package to download.
+    # @param path [String] the path to activate.
+    # @return [String] the path to the downloaded zip.
+    def download_package package, path='.'
+      pack = get_package package
+      pack.info = @info
+      return pack.download(path)
     end
 
     # Grabs the help menu from AEM
@@ -87,48 +117,6 @@ module Aem
         end
         return other
       end
-    end
-
-    # Build a single package
-    #
-    # @param package [String] the name of the package to build.
-    # @return [String] the response from the server
-    def build_package package
-      pack = get_package package
-      pack.info = @info
-      return pack.build
-    end
-
-    # Install a package
-    #
-    # @param package [String] the name of the package to install.
-    # @return [Curl::Easy] the Curl object.
-    def install_package package, group='my_packages'
-      pack = "#{@install_package_path}/#{group}/#{package}.zip"
-      c = Curl::Easy.new("http://#{@info.url}/#{pack}?cmd=install")
-      c.http_auth_types = :basic
-      c.username = @info.username
-      c.password = @info.password
-      c.http_post
-      res = Set.new
-      c.body_str.split('<br>').each do |br|
-        content = Nokogiri::HTML(br)
-        path = content.css('.\-').text.strip
-        path = path.slice(2, path.size)
-        res << path unless path.nil? || path.empty?
-      end
-      return res.to_a
-    end
-
-    # Download a package
-    #
-    # @param package [String] the name of the package to download.
-    # @param path [String] the path to activate.
-    # @return [String] the path to the downloaded zip.
-    def download_package package, path='.'
-      pack = get_package package
-      pack.info = @info
-      return pack.download(path)
     end
 
     # Upload a package with a name

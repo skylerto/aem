@@ -1,4 +1,4 @@
 module Aem
-  # Version
-  VERSION = "0.1.1"
+  # AEM API Version Number
+  VERSION = "0.1.2"
 end
