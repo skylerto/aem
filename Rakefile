@@ -20,3 +20,7 @@ namespace :deploy do
     puts cmd
   end
 end
+
+task :doc do
+  puts `yardoc --output-dir docs`
+end
