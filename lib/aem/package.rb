@@ -57,9 +57,18 @@ module Aem
     def install
       raise "Info #{@info} cannot be null" if @info.nil?
       pack = "#{INSTALL_PATH}/#{@group}/#{@downloadName}"
-      url = "http://#{@info.url}/#{pack}?cmd=install"
+      if @info.url.include? 'http'
+        url = "#{@info.url}/#{pack}?cmd=install"
+      else
+        url = "http://#{@info.url}/#{pack}?cmd=install"
+      end
       uri = URI(url)
+
       http = Net::HTTP.new(uri.host, uri.port)
+      if @info.url.include? 'https'
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       request = Net::HTTP::Post.new(uri.request_uri)
       request.basic_auth @info.username, @info.password
       request.content_type = 'application/x-www-form-urlencoded'
